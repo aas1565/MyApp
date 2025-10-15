@@ -2,10 +2,7 @@ package com.example.hw_3.data
 
 import com.google.gson.annotations.SerializedName
 
-///data class - специальный тип класса в Kotlin для хранения данных
 data class MatchesResponse(
-    //@SerializedName("matches") - указывает, что JSON поле "matches" маппится на это свойство
-    //val matches: List<Match> - список объектов матчей
     @SerializedName("matches") val matches: List<Match>
 )
 
@@ -15,9 +12,7 @@ data class Match(
     @SerializedName("homeTeam") val homeTeam: Team,
     @SerializedName("awayTeam") val awayTeam: Team,
     @SerializedName("score") val score: Score?,
-    @SerializedName("utcDate") val date: String,
-
-
+    @SerializedName("utcDate") val date: String
 )
 
 data class Team(
