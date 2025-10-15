@@ -14,8 +14,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.hw_3.data.Match
-import com.example.hw_3.screens.formatDate
-import com.example.hw_3.viewmodel.FootballViewModel
+import com.example.hw_3.presentation.ui.formatDate
+import com.example.hw_3.presentation.viewmodel.FootballViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +25,6 @@ fun MatchDetailScreen(
     viewModel: FootballViewModel
 ) {
     val matches by viewModel.matches.collectAsState()
-
     val match = matches.find { it.id == matchId }
 
     Scaffold(
@@ -92,17 +91,11 @@ fun MatchDetailContent(match: Match, modifier: Modifier = Modifier) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Заголовок с командами
         TeamVsTeamSection(match)
-
         Spacer(modifier = Modifier.height(24.dp))
-
-        // Информация о матче
         MatchInfoSection(match)
-
         Spacer(modifier = Modifier.height(24.dp))
-
-        // Детали счета (если матч завершен)
+        
         if (match.status == "FINISHED" && match.score?.fullTime != null) {
             ScoreDetailsSection(match)
         }
@@ -122,12 +115,9 @@ fun TeamVsTeamSection(match: Match) {
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Домашняя команда
             TeamInfo(match.homeTeam, isHomeTeam = true)
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Счет
             if (match.score?.fullTime?.home != null && match.score.fullTime.away != null) {
                 Text(
                     text = "${match.score.fullTime.home} - ${match.score.fullTime.away}",
@@ -145,8 +135,6 @@ fun TeamVsTeamSection(match: Match) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Гостевая команда
             TeamInfo(match.awayTeam, isHomeTeam = false)
         }
     }
@@ -219,7 +207,6 @@ fun MatchInfoSection(match: Match) {
             })
 
             CenteredInfoRow("Дата и время", formatDate(match.date))
-
             CenteredInfoRow("ID матча", match.id.toString())
         }
     }
@@ -279,28 +266,6 @@ fun CenteredInfoRow(label: String, value: String) {
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
-        )
-    }
-}
-
-// Старая InfoRow оставлена на случай, если нужна где-то еще
-@Composable
-fun InfoRow(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium
         )
     }
 }

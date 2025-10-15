@@ -5,9 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.hw_3.screens.Screen1
-import com.example.hw_3.viewmodel.FootballViewModel
-
+import com.example.hw_3.presentation.ui.Screen1
+import com.example.hw_3.presentation.viewmodel.FootballViewModel
 
 @Composable
 fun NavigationGraph(
@@ -22,7 +21,7 @@ fun NavigationGraph(
         }
         composable(Routes.Screen1.route) {
             onBottomBarVisibilityChanged(true)
-            Screen1(navController = navController, viewModel = footballViewModel) // ← ПЕРЕДАЕМ
+            Screen1(navController = navController, viewModel = footballViewModel)
         }
         composable(Routes.Screen2.route) {
             onBottomBarVisibilityChanged(true)
