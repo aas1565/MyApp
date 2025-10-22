@@ -11,6 +11,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.hw_3.BottomNavigationItems
+import com.example.hw_3.filter.BadgeBox
+import com.example.hw_3.filter.LocalFilterBadgeState
 
 @Composable
 fun BottomBar(
@@ -41,7 +43,15 @@ fun BottomBar(
                     Text(text = screen.title!!)
                 },
                 icon = {
-                    Icon(imageVector = screen.icon!!, contentDescription = "")
+                    // Добавляем бейдж только для иконки фильтров (Screen1)
+                    if (screen == BottomNavigationItems.Screen1) {
+                        val filterBadgeState = LocalFilterBadgeState.current
+                        BadgeBox(showBadge = filterBadgeState.showBadge) {
+                            Icon(imageVector = screen.icon!!, contentDescription = "")
+                        }
+                    } else {
+                        Icon(imageVector = screen.icon!!, contentDescription = "")
+                    }
                 },
                 selected = currentRoute == screen.route,
                 onClick = {
