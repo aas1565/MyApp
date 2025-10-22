@@ -14,13 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.hw_3.Routes
 import com.example.hw_3.viewmodel.FootballViewModel
+import com.example.hw_3.data.Match
 
 @Composable
 fun Screen1(navController: NavHostController,
             viewModel: FootballViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     //val viewModel = androidx.lifecycle.viewmodel.compose.viewModel<FootballViewModel>()
-    val matches by viewModel.matches.collectAsState()
+    val matches by viewModel.filteredMatches.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
@@ -33,12 +34,25 @@ fun Screen1(navController: NavHostController,
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "Футбольные матчи",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Футбольные матчи",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            
+            Button(
+                onClick = { navController.navigate(Routes.Filter.route) }
+            ) {
+                Text("Фильтры")
+            }
+        }
 
         if (isLoading) {
             Box(
@@ -77,7 +91,7 @@ fun Screen1(navController: NavHostController,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MatchItem(match: com.example.hw_3.data.Match, onMatchClick: () -> Unit) {
+fun MatchItem(match: Match, onMatchClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

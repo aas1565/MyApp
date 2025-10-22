@@ -5,6 +5,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.example.hw_3.data.Match
 import com.example.hw_3.screens.formatDate
 import com.example.hw_3.viewmodel.FootballViewModel
+import com.example.hw_3.favorites.FavoritesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,6 +83,52 @@ fun MatchDetailScreen(
         } else {
             MatchDetailContent(match = match, modifier = Modifier.padding(paddingValues))
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MatchDetailScreen(
+    match: Match,
+    navController: NavHostController,
+    favoritesViewModel: FavoritesViewModel
+) {
+    val isFavorite by favoritesViewModel.isFavoriteFlow(match.id).collectAsState()
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "Детали матча",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        if (isFavorite) {
+                            favoritesViewModel.removeFromFavorites(match.id)
+                        } else {
+                            favoritesViewModel.addToFavorites(match)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
+                            contentDescription = if (isFavorite) "Удалить из избранного" else "Добавить в избранное",
+                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        MatchDetailContent(match = match, modifier = Modifier.padding(paddingValues))
     }
 }
 
@@ -218,9 +267,14 @@ fun MatchInfoSection(match: Match) {
                 else -> match.status
             })
 
-            CenteredInfoRow("Дата и время", formatDate(match.date))
+            CenteredInfoRow("Дата", formatDate(match.date))
 
-            CenteredInfoRow("ID матча", match.id.toString())
+            if (match.score?.fullTime?.home != null && match.score.fullTime.away != null) {
+                CenteredInfoRow(
+                    "Счет",
+                    "${match.score.fullTime.home} - ${match.score.fullTime.away}"
+                )
+            }
         }
     }
 }
@@ -230,77 +284,46 @@ fun MatchInfoSection(match: Match) {
 fun ScoreDetailsSection(match: Match) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Результат",
+                text = "Детали счета",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 12.dp),
-                textAlign = TextAlign.Center
+                modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            match.score?.fullTime?.let { score ->
-                CenteredInfoRow("Финальный счет", "${score.home} - ${score.away}")
+            InfoRow(
+                label = "Полный счет",
+                value = "${match.score?.fullTime?.home ?: 0} - ${match.score?.fullTime?.away ?: 0}"
+            )
 
-                val winner = when {
-                    score.home!! > score.away!! -> match.homeTeam.name
-                    score.away > score.home -> match.awayTeam.name
-                    else -> "Ничья"
-                }
-                CenteredInfoRow("Победитель", winner)
-            }
+            // Дополнительные детали можно добавить здесь
         }
     }
 }
 
 @Composable
 fun CenteredInfoRow(label: String, value: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center
-        )
+        Text(text = label, fontWeight = FontWeight.SemiBold)
+        Text(text = value)
     }
 }
 
-// Старая InfoRow оставлена на случай, если нужна где-то еще
 @Composable
 fun InfoRow(label: String, value: String) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium
-        )
+        Text(text = label)
+        Text(text = value)
     }
 }

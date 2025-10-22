@@ -7,6 +7,6 @@ import retrofit2.http.Headers
 
 interface FootballApiService {
     @GET("matches")
-    @Headers("X-Auth-Token: 00c0f658b6094ce3aaf2dec9c8a89c64")
+    @Headers("X-Auth-Token: 5f5e8b7e1e5f4e4b9b5e8b7e1e5f4e4b")
     suspend fun getMatches(): Response<MatchesResponse>
 }
