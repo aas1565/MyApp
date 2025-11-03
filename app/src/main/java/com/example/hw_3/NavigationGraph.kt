@@ -30,7 +30,12 @@ fun NavigationGraph(
         }
         composable(Routes.Screen3.route) {
             onBottomBarVisibilityChanged(true)
-            Screen3()
+            Screen3(navController = navController)
+        }
+        // ДОБАВЬТЕ ЭТОТ МАРШРУТ
+        composable("editProfile") {
+            onBottomBarVisibilityChanged(false)
+            EditProfileScreen(navController = navController)
         }
         composable(
             route = Routes.MatchDetail.route,
