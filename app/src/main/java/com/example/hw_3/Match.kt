@@ -18,7 +18,7 @@ data class Match(
     @SerializedName("utcDate") val date: String,
 
 
-)
+    )
 
 data class Team(
     @SerializedName("id") val id: Int,

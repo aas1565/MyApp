@@ -1,12 +1,14 @@
 package com.example.hw_3
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.hw_3.screens.Screen1
 import com.example.hw_3.viewmodel.FootballViewModel
+import com.example.profile.EditProfileScreen
 
 
 @Composable
@@ -30,7 +32,16 @@ fun NavigationGraph(
         }
         composable(Routes.Screen3.route) {
             onBottomBarVisibilityChanged(true)
-            Screen3()
+            Screen3(navController = navController)
+        }
+        // ДОБАВЬТЕ ЭТОТ МАРШРУТ
+        composable("editProfile") {
+            onBottomBarVisibilityChanged(false)
+            val activityProvider = remember { ProfileActivityProviderImpl() }
+            EditProfileScreen(
+                navController = navController,
+                activityProvider = activityProvider
+            )
         }
         composable(
             route = Routes.MatchDetail.route,
